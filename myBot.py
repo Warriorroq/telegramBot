@@ -4,6 +4,7 @@ from telegram import *
 from telegram.ext import *
 from requests import *
 from random import *
+from iqplayer import *
 
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -11,7 +12,14 @@ updater = Updater("5347249231:AAEJAR3s1oTRrbz1ex6-epcK_Ds95Npq38A", use_context=
 dp = updater.dispatcher
 
 this_person_not_exist = "https://thispersondoesnotexist.com/image"
-random_numbers_texts = open("randomIntStrings", "r").read().split('\n')
+random_numbers_texts = open("textsForRandomInt", "r").read().split('\n')
+
+games = {
+    0: { #game id
+     0 : iqplayer('0') #player's id and info
+    }
+}
+
 
 def bot_start():
     dp.add_handler(CommandHandler("start", greetings))
@@ -27,14 +35,74 @@ def handle_message(update, context):
         send_non_existing_person(update, context)
     if "Random num" in msg_text:
         send_random_integer(update, context)
+    if "Start IQ game" in msg_text:
+        try_to_create_iq_game(update, context)
+    if "Register in IQ game" in msg_text:
+        try_to_register_in_iq_game(update, context)
+    if "Check IQ" in msg_text:
+        try_to_play_iq_game(update, context)
+
+
+def try_to_play_iq_game(update, context):
+    chat_id = update.message.chat.id
+    users_id = update.message.from_user.id
+    if chat_id in games:
+        if users_id in games[chat_id]:
+            games[chat_id][users_id].play_game(update, context)
+        else:
+            context.bot.send_message(
+                chat_id=chat_id,
+                text="you are not registered in game",
+            )
+    else:
+        context.bot.send_message(
+            chat_id=chat_id,
+            text="you haven't registered game yet",
+        )
+
+def try_to_register_in_iq_game(update, context):
+    chat_id = update.message.chat.id
+    users_id = update.message.from_user.id
+    if chat_id in games:
+        if users_id in games[chat_id]:
+            context.bot.send_message(
+                chat_id= chat_id,
+                text="you have already registered in game",
+            )
+        else:
+            games[chat_id][users_id] = iqplayer(update.message.from_user.username)
+            context.bot.send_message(
+                chat_id=chat_id,
+                text="registered: {}".format(games[chat_id][users_id].nickname),
+            )
+    else:
+        context.bot.send_message(
+            chat_id= chat_id,
+            text="you haven't registered game yet",
+        )
+
+
+def try_to_create_iq_game(update, context):
+    chat_id = update.message.chat.id
+    if chat_id in games:
+        context.bot.send_message(
+            chat_id=chat_id,
+            text="game exist id:{}".format(chat_id),
+        )
+        return
+    games[chat_id] = {}
+    context.bot.send_message(
+        chat_id=chat_id,
+        text="game started id:{}".format(chat_id),
+    )
 
 
 def send_random_integer(update, context):
     nums = re.findall(r'\d+', update.message.text)
-    item = random_numbers_texts[randint(0, len(random_numbers_texts) - 1)]
+    string_to_format = random_numbers_texts[randint(0, len(random_numbers_texts) - 1)]
     context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text=item.format(get_randint_from_last_array_elements(nums)),
+        text=string_to_format.format(get_randint_from_last_array_elements(nums)),
     )
 
 
@@ -42,11 +110,12 @@ def get_randint_from_last_array_elements(nums):
     if len(nums) >= 3:
         num1 = int(nums[-1])
         num2 = int(nums[-2])
-        if(num1 > num2):
+        if (num1 > num2):
             return randint(num2, num1)
         return randint(num1, num2)
     else:
         return randint(0, 10)
+
 
 def send_non_existing_person(update, context):
     image = get(this_person_not_exist).content
