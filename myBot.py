@@ -117,5 +117,5 @@ def error(self, update, context):
 def answer_reply(update, context, text):
     context.bot.send_message(
         chat_id=update.effective_chat.id,
-        text="Welcome!",
+        text=text,
     )
