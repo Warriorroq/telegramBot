@@ -11,12 +11,7 @@ updater = Updater("5347249231:AAEJAR3s1oTRrbz1ex6-epcK_Ds95Npq38A", use_context=
 dp = updater.dispatcher
 
 this_person_not_exist = "https://thispersondoesnotexist.com/image"
-random_numbers_texts = [
-    "Sammy has {} balloons.",
-    "You have {} girlfriends.",
-    "{} your unlucky number",
-    ]
-
+random_numbers_texts = open("randomIntStrings", "r").read().split('\n')
 
 def bot_start():
     dp.add_handler(CommandHandler("start", greetings))
@@ -45,7 +40,11 @@ def send_random_integer(update, context):
 
 def get_randint_from_last_array_elements(nums):
     if len(nums) >= 3:
-        return randint(int(nums[-1]), int(nums[-2]))
+        num1 = int(nums[-1])
+        num2 = int(nums[-2])
+        if(num1 > num2):
+            return randint(num2, num1)
+        return randint(num1, num2)
     else:
         return randint(0, 10)
 
