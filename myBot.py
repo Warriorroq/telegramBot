@@ -8,7 +8,7 @@ from iqplayer import *
 
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
 logger = logging.getLogger(__name__)
-updater = Updater("5347249231:AAEJAR3s1oTRrbz1ex6-epcK_Ds95Npq38A", use_context=True)
+updater = Updater(open("token", "r").read(), use_context=True)
 dp = updater.dispatcher
 
 this_person_not_exist = "https://thispersondoesnotexist.com/image"
