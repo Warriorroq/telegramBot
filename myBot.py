@@ -50,51 +50,30 @@ def try_to_play_iq_game(update, context):
         if users_id in games[chat_id]:
             games[chat_id][users_id].play_game(update, context)
         else:
-            context.bot.send_message(
-                chat_id=chat_id,
-                text="you are not registered in game",
-            )
+            answer_reply(update, context, "you are not registered in game")
     else:
-        context.bot.send_message(
-            chat_id=chat_id,
-            text="you haven't registered game yet",
-        )
+        answer_reply(update, context, "you haven't registered game yet")
 
 def try_to_register_in_iq_game(update, context):
     chat_id = update.message.chat.id
     users_id = update.message.from_user.id
     if chat_id in games:
         if users_id in games[chat_id]:
-            context.bot.send_message(
-                chat_id= chat_id,
-                text="you have already registered in game",
-            )
+            answer_reply(update, context, "you have already registered in game")
         else:
             games[chat_id][users_id] = iqplayer(update.message.from_user.username)
-            context.bot.send_message(
-                chat_id=chat_id,
-                text="registered: {}".format(games[chat_id][users_id].nickname),
-            )
+            answer_reply(update, context, "registered: {}".format(games[chat_id][users_id].nickname))
     else:
-        context.bot.send_message(
-            chat_id= chat_id,
-            text="you haven't registered game yet",
-        )
+        answer_reply(update, context, "you haven't registered game yet")
 
 
 def try_to_create_iq_game(update, context):
     chat_id = update.message.chat.id
     if chat_id in games:
-        context.bot.send_message(
-            chat_id=chat_id,
-            text="game exist id:{}".format(chat_id),
-        )
+        answer_reply(update, context, "game exist id:{}".format(chat_id))
         return
     games[chat_id] = {}
-    context.bot.send_message(
-        chat_id=chat_id,
-        text="game started id:{}".format(chat_id),
-    )
+    answer_reply(update, context,"game started id:{}".format(chat_id))
 
 
 def send_random_integer(update, context):
@@ -124,16 +103,19 @@ def send_non_existing_person(update, context):
             chat_id=update.effective_chat.id,
             media=[InputMediaPhoto(image, caption="")]
         )
-    update.message.reply_text("Done!")
+    answer_reply(update, context, "Done!")
 
 
 def greetings(update, context):
-    context.bot.send_message(
-        chat_id=update.effective_chat.id,
-        text="Welcome!",
-        # reply_markup=ReplyKeyboardMarkup([[KeyboardButton('Start')]])
-    )
+    answer_reply(update, context, "Welcome!")
 
 
 def error(self, update, context):
     self.logger.warning('Update "%s" caused error "%s"', update, context.error)
+
+
+def answer_reply(update, context, text):
+    context.bot.send_message(
+        chat_id=update.effective_chat.id,
+        text="Welcome!",
+    )
