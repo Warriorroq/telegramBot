@@ -22,7 +22,7 @@ class iqplayer:
             string_to_format = iq_increase_texts[random.randint(0, len(iq_increase_texts) - 1)]
         context.bot.send_message(
             chat_id=update.message.chat.id,
-            text=string_to_format.format(iq_change, self.iq),
+            text=string_to_format.format(iq_change, self.iq, self.nickname),
         )
 
     def change_iq(self):
