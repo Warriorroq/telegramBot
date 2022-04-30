@@ -21,12 +21,13 @@ def load_games_data():
         return pickle.load(fp)
 
 
-games = load_games_data()
+games = {}
 
 
 def save_games():
     with open('data.json', 'wb') as fp:
         pickle.dump(games, fp)
+
 
 
 def bot_start():
@@ -73,7 +74,7 @@ def try_to_register_in_iq_game(update, context):
         if users_id in games[chat_id]:
             answer_reply(update, context, "you have already registered in game")
         else:
-            games[chat_id][users_id] = iqplayer(update.message.from_user.username)
+            games[chat_id][users_id] = iqPlayer(update.message.from_user.username)
             save_games()
             answer_reply(update, context, "registered: {}".format(games[chat_id][users_id].nickname))
     else:
