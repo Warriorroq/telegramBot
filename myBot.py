@@ -41,6 +41,8 @@ def handle_message(update, context):
         try_to_register_in_iq_game(update, context)
     if "Check IQ" in msg_text:
         try_to_play_iq_game(update, context)
+    if "Help" in msg_text:
+        answer_reply(update,context, open("commandHelp", "r").read())
 
 
 def try_to_play_iq_game(update, context):
@@ -108,6 +110,7 @@ def send_non_existing_person(update, context):
 
 def greetings(update, context):
     answer_reply(update, context, "Welcome!")
+    answer_reply(update, context, "Type: '/Punk2077_bot Help' for help...")
 
 
 def error(self, update, context):
