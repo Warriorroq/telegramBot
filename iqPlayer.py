@@ -27,7 +27,7 @@ class iqplayer:
 
     def change_iq(self):
         # minimum f : y = 0.07 + (90/x) * |sin(x/50)|
-        # 0.07 - minimum chance
+        # 0.15 - minimum chance
         # 90/x - increase chance to up iq if it is lower than 90
 
         # |sin(x/50)| - slightly lowering chance until value of 157 (max chance >1),
@@ -35,7 +35,7 @@ class iqplayer:
         # and again increasing 386(max chance is 0.17)...545(max 0.104)...703(0.06)...
 
         # it won't be possible to get more than 1000
-        chance = 0.07 + 90/self.iq * abs(math.sin(self.iq/50.0))
+        chance = 0.15 + 90/self.iq * abs(math.sin(self.iq/50.0))
         current_value = random.uniform(0, 1)
         max_iq_change = int(15 * int((self.iq / 90) * 100) / 100)
         if current_value < chance:

@@ -1,5 +1,6 @@
 import logging
 import re
+import pickle
 from telegram import *
 from telegram.ext import *
 from requests import *
@@ -14,11 +15,18 @@ dp = updater.dispatcher
 this_person_not_exist = "https://thispersondoesnotexist.com/image"
 random_numbers_texts = open("textsForRandomInt", "r").read().split('\n')
 
-games = {
-    0: { #game id
-     0 : iqplayer('0') #player's id and info
-    }
-}
+
+def load_games_data():
+    with open('data.json', 'rb') as fp:
+        return pickle.load(fp)
+
+
+games = load_games_data()
+
+
+def save_games():
+    with open('data.json', 'wb') as fp:
+        pickle.dump(games, fp)
 
 
 def bot_start():
@@ -42,7 +50,7 @@ def handle_message(update, context):
     if "Check IQ" in msg_text:
         try_to_play_iq_game(update, context)
     if "Help" in msg_text:
-        answer_reply(update,context, open("commandHelp", "r").read())
+        answer_reply(update, context, open("commandHelp", "r").read())
 
 
 def try_to_play_iq_game(update, context):
@@ -51,10 +59,12 @@ def try_to_play_iq_game(update, context):
     if chat_id in games:
         if users_id in games[chat_id]:
             games[chat_id][users_id].play_game(update, context)
+            save_games()
         else:
             answer_reply(update, context, "you are not registered in game")
     else:
         answer_reply(update, context, "you haven't registered game yet")
+
 
 def try_to_register_in_iq_game(update, context):
     chat_id = update.message.chat.id
@@ -64,6 +74,7 @@ def try_to_register_in_iq_game(update, context):
             answer_reply(update, context, "you have already registered in game")
         else:
             games[chat_id][users_id] = iqplayer(update.message.from_user.username)
+            save_games()
             answer_reply(update, context, "registered: {}".format(games[chat_id][users_id].nickname))
     else:
         answer_reply(update, context, "you haven't registered game yet")
@@ -75,6 +86,7 @@ def try_to_create_iq_game(update, context):
         answer_reply(update, context, "game exist id:{}".format(chat_id))
         return
     games[chat_id] = {}
+    save_games()
     answer_reply(update, context,"game started id:{}".format(chat_id))
 
 
